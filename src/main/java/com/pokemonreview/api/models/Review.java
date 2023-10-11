@@ -16,7 +16,7 @@ import javax.persistence.Id;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String title;
     private String content;
     private int start;

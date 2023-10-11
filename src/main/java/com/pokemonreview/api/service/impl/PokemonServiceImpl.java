@@ -1,6 +1,7 @@
 package com.pokemonreview.api.service.impl;
 
 import com.pokemonreview.api.dto.PokemonDto;
+import com.pokemonreview.api.exceptions.PokemonNotFoundException;
 import com.pokemonreview.api.models.Pokemon;
 import com.pokemonreview.api.repository.PokemonRepository;
 import com.pokemonreview.api.service.PokemonService;
@@ -39,6 +40,23 @@ public class PokemonServiceImpl implements PokemonService {
     public List<PokemonDto> getAllPokemon() {
         List<Pokemon> pokemons = pokemonRepository.findAll();
         return pokemons.stream().map(pokemon -> mapToDto(pokemon)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PokemonDto getPokemonById(long id) {
+        Pokemon pokemon = pokemonRepository.findById(id).orElseThrow(() -> new PokemonNotFoundException("Pokemon could not be found!"));
+        return mapToDto(pokemon);
+    }
+
+    @Override
+    public PokemonDto updatePokemon(PokemonDto pokemonDto, long id) {
+        Pokemon pokemon = pokemonRepository.findById(id).orElseThrow(() -> new PokemonNotFoundException("Pokemon could not be updated!"));
+
+        pokemon.setType(pokemonDto.getType());
+        pokemon.setName(pokemonDto.getName());
+
+        Pokemon updatedPokemon = pokemonRepository.save(pokemon);
+        return mapToDto(updatedPokemon);
     }
 
     private PokemonDto mapToDto(Pokemon pokemon) {
