@@ -21,13 +21,21 @@ public class ReviewController {
 
     @PostMapping("/pokemon/{pokemonId}/review")
     public ResponseEntity<ReviewDto> createReview(
-            @PathVariable(value = "pokemonId") int pokemonId,
+            @PathVariable(value = "pokemonId") long pokemonId,
             @RequestBody ReviewDto reviewDto) {
         return new ResponseEntity<>(reviewService.createReview(pokemonId, reviewDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/pokemon/{pokemonId}/reviews")
-    public List<ReviewDto> getReviewsByPokemonId(@PathVariable(value = "pokemonId") int pokemonId) {
+    public List<ReviewDto> getReviewsByPokemonId(@PathVariable(value = "pokemonId") long pokemonId) {
         return reviewService.getReviewsByPokemonId(pokemonId);
+    }
+
+    @GetMapping("/pokemon/{pokemonId}/reviews/{id}")
+    public ResponseEntity<ReviewDto> getReviewById(
+            @PathVariable(value = "pokemonId") long pokemonId,
+            @PathVariable(value = "id") long reviewId) {
+        ReviewDto reviewDto = reviewService.getReviewById(reviewId, pokemonId);
+        return new ResponseEntity<>(reviewDto, HttpStatus.OK);
     }
 }
