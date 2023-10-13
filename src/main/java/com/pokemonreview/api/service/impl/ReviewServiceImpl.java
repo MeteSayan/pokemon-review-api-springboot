@@ -10,6 +10,9 @@ import com.pokemonreview.api.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private ReviewRepository reviewRepository;
@@ -32,6 +35,13 @@ public class ReviewServiceImpl implements ReviewService {
         Review newReview = reviewRepository.save(review);
 
         return mapToDto(newReview);
+    }
+
+    @Override
+    public List<ReviewDto> getReviewsByPokemonId(long id) {
+        List<Review> reviews = reviewRepository.findByPokemonId(id);
+
+        return reviews.stream().map(review -> mapToDto(review)).collect(Collectors.toList());
     }
 
     private ReviewDto mapToDto(Review review) {
