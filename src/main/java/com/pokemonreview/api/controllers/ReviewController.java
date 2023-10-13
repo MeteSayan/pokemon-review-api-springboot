@@ -19,7 +19,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PostMapping("/pokemon/{pokemonId}/review")
+    @PostMapping("/pokemon/{pokemonId}/reviews")
     public ResponseEntity<ReviewDto> createReview(
             @PathVariable(value = "pokemonId") long pokemonId,
             @RequestBody ReviewDto reviewDto) {
@@ -37,5 +37,13 @@ public class ReviewController {
             @PathVariable(value = "id") long reviewId) {
         ReviewDto reviewDto = reviewService.getReviewById(reviewId, pokemonId);
         return new ResponseEntity<>(reviewDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/pokemon/{pokemonId}/reviews/{id}")
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable(value = "pokemonId") long pokemonId,
+                                                  @PathVariable(value = "id") long reviewId,
+                                                  @RequestBody ReviewDto reviewDto) {
+        ReviewDto updatedReview = reviewService.updateReview(pokemonId, reviewId, reviewDto);
+        return new ResponseEntity<>(updatedReview, HttpStatus.OK);
     }
 }

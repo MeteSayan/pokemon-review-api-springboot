@@ -9,5 +9,7 @@ public interface ReviewService {
 
     List<ReviewDto> getReviewsByPokemonId(long id);
 
-    ReviewDto getReviewById(long reviewId, long pokemenId);
+    ReviewDto getReviewById(long reviewId, long pokemonId);
+
+    ReviewDto updateReview(long pokemonId, long reviewId, ReviewDto reviewDto);
 }
