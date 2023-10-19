@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -53,5 +54,34 @@ public class ReviewRepositoryTests {
         Review reviewReturn = reviewRepository.findById(review.getId()).get();
 
         Assertions.assertThat(reviewReturn).isNotNull();
+    }
+
+    @Test
+    public void ReviewRepository_UpdateReview_ReturnReview() {
+        Review review = Review.builder().title("title").content("content").stars(5).build();
+
+        reviewRepository.save(review);
+
+        Review savedReview = reviewRepository.findById(review.getId()).get();
+
+        savedReview.setTitle("Title");
+        savedReview.setContent("Content");
+
+        Review updatedPokemon = reviewRepository.save(savedReview);
+
+        Assertions.assertThat(updatedPokemon.getTitle()).isNotNull();
+        Assertions.assertThat(updatedPokemon.getContent()).isNotNull();
+    }
+
+    @Test
+    public void ReviewRepository_ReviewDelete_ReturnReviewIsEmpty() {
+        Review review = Review.builder().title("title").content("content").stars(5).build();
+
+        reviewRepository.save(review);
+
+        reviewRepository.deleteById(review.getId());
+        Optional<Review> reviewReturn = reviewRepository.findById(review.getId());
+
+        Assertions.assertThat(reviewReturn).isEmpty();
     }
 }
