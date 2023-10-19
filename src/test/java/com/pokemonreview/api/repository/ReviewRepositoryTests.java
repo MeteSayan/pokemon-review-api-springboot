@@ -8,6 +8,8 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class ReviewRepositoryTests {
@@ -26,5 +28,30 @@ public class ReviewRepositoryTests {
 
         Assertions.assertThat(savedReview).isNotNull();
         Assertions.assertThat(savedReview.getId()).isGreaterThan(0);
+    }
+
+    @Test
+    public void ReviewRepository_GetAll_ReturnsMoreThanOneReview() {
+        Review review = Review.builder().title("title").content("content").stars(5).build();
+        Review review2 = Review.builder().title("title").content("content").stars(5).build();
+
+        reviewRepository.save(review);
+        reviewRepository.save(review2);
+
+        List<Review> reviewList = reviewRepository.findAll();
+
+        Assertions.assertThat(reviewList).isNotNull();
+        Assertions.assertThat(reviewList.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void ReviewRepository_FindById_ReturnsSavedReview() {
+        Review review = Review.builder().title("title").content("content").stars(5).build();
+
+        reviewRepository.save(review);
+
+        Review reviewReturn = reviewRepository.findById(review.getId()).get();
+
+        Assertions.assertThat(reviewReturn).isNotNull();
     }
 }
