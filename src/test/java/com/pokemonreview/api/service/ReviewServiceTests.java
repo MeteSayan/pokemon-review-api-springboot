@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,4 +78,37 @@ public class ReviewServiceTests {
 
         Assertions.assertThat(reviewReturn).isNotNull();
     }
+
+    @Test
+    public void ReviewService_UpdatePokemon_ReturnReviewDto() {
+        long pokemonId = 1;
+        long reviewId = 1;
+
+        pokemon.setReviews(Arrays.asList(review));
+        review.setPokemon(pokemon);
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(pokemonRepository.findById(pokemonId)).thenReturn(Optional.of(pokemon));
+        when(reviewRepository.save(review)).thenReturn(review);
+
+        ReviewDto updateReturn = reviewService.updateReview(pokemonId, reviewId, reviewDto);
+
+        Assertions.assertThat(updateReturn).isNotNull();
+    }
+
+    @Test
+    public void ReviewService_DeletePokemonById_ReturnVoid() {
+        long pokemonId = 1;
+        long reviewId = 1;
+
+        pokemon.setReviews(Arrays.asList(review));
+        review.setPokemon(pokemon);
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(pokemonRepository.findById(pokemonId)).thenReturn(Optional.of(pokemon));
+
+        assertAll(() -> reviewService.deleteReview(pokemonId, reviewId));
+    }
+
+
 }
