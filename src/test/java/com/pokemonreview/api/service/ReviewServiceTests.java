@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -50,5 +52,29 @@ public class ReviewServiceTests {
         ReviewDto savedReview = reviewService.createReview(pokemon.getId(), reviewDto);
 
         Assertions.assertThat(savedReview).isNotNull();
+    }
+
+    @Test
+    public void ReviewService_GetReviewsByPokemonId_ReturnReviewDto() {
+        long pokemonId = 1;
+        when(reviewRepository.findByPokemonId(pokemonId)).thenReturn(Arrays.asList(review));
+
+        List<ReviewDto> pokemonReturn = reviewService.getReviewsByPokemonId(pokemonId);
+        Assertions.assertThat(pokemonReturn).isNotNull();
+    }
+
+    @Test
+    public void ReviewService_GetReviewById_ReturnReviewDto() {
+        long pokemonId = 1;
+        long reviewId = 1;
+
+        review.setPokemon(pokemon);
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(pokemonRepository.findById(pokemonId)).thenReturn(Optional.of(pokemon));
+
+        ReviewDto reviewReturn = reviewService.getReviewById(reviewId, pokemonId);
+
+        Assertions.assertThat(reviewReturn).isNotNull();
     }
 }
