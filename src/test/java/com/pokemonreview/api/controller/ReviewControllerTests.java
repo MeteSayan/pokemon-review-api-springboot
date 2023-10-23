@@ -21,8 +21,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(controllers = ReviewController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -57,5 +58,64 @@ public class ReviewControllerTests {
 
         response.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()", CoreMatchers.is(Arrays.asList(reviewDto).size())));
+    }
+
+    @Test
+    public void ReviewController_UpdateReview_ReturnReviewDto() throws Exception {
+        long pokemonId = 1;
+        long reviewId = 1;
+        when(reviewService.updateReview(pokemonId, reviewId, reviewDto)).thenReturn(reviewDto);
+
+        ResultActions response = mockMvc.perform(put("/api/pokemon/" + pokemonId + "/reviews/" + reviewId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reviewDto)));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title", CoreMatchers.is(reviewDto.getTitle())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", CoreMatchers.is(reviewDto.getContent())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.stars", CoreMatchers.is(reviewDto.getStars())));
+    }
+
+    @Test
+    public void ReviewController_CreateReview_ReturnReviewDto() throws Exception {
+        long pokemonId = 1;
+        when(reviewService.createReview(pokemonId, reviewDto)).thenReturn(reviewDto);
+
+        ResultActions response = mockMvc.perform(post("/api/pokemon/" + pokemonId + "/reviews")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reviewDto)));
+
+        response.andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title", CoreMatchers.is(reviewDto.getTitle())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", CoreMatchers.is(reviewDto.getContent())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.stars", CoreMatchers.is(reviewDto.getStars())));
+    }
+
+    @Test
+    public void ReviewController_GetReviewById_ReturnReviewDto() throws Exception {
+        long pokemonId = 1;
+        long reviewId = 1;
+        when(reviewService.getReviewById(reviewId, pokemonId)).thenReturn(reviewDto);
+
+        ResultActions response = mockMvc.perform(get("/api/pokemon/" + pokemonId + "/reviews/" + reviewId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title", CoreMatchers.is(reviewDto.getTitle())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", CoreMatchers.is(reviewDto.getContent())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.stars", CoreMatchers.is(reviewDto.getStars())));
+    }
+
+    @Test
+    public void ReviewController_DeleteReview_ReturnOk() throws Exception {
+        long pokemonId = 1;
+        long reviewId = 1;
+
+        doNothing().when(reviewService).deleteReview(pokemonId, reviewId);
+
+        ResultActions response = mockMvc.perform(delete("/api/pokemon/" + pokemonId + "/reviews/" + reviewId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        response.andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
